@@ -57,6 +57,21 @@ class ViewController: UIViewController {
     
     
     @IBAction func swap(_ sender: Any?) {
+        
+        super.view.sizeToFit()
+        super.view.setNeedsLayout()
+        super.view.setNeedsDisplay()
+        super.view.layoutIfNeeded()
+        super.view.layoutSubviews()
+        
+        
+        view.sizeToFit()
+        view.setNeedsLayout()
+        view.setNeedsDisplay()
+        view.layoutIfNeeded()
+        view.layoutSubviews()
+        
+        
         if portraitView?.isHidden == true {
             portraitView?.isHidden = false
             landscapeView?.isHidden = true
@@ -64,6 +79,10 @@ class ViewController: UIViewController {
             portraitView?.isHidden = true
             landscapeView?.isHidden = false
         }
+    }
+    
+    @IBAction func close(_ sender: Any?) {
+        dismiss(animated: true, completion: nil)
     }
 }
 
