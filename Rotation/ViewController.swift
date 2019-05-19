@@ -10,10 +10,8 @@ import UIKit
 
 class ViewController: UIViewController {
     @IBOutlet var notRotatingView: UIView?
-    
-//    override var shouldAutorotate: Bool {
-//        return false
-//    }
+    @IBOutlet var portraitView: UIView?
+    @IBOutlet var landscapeView: UIView?
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return .allButUpsideDown
@@ -21,36 +19,50 @@ class ViewController: UIViewController {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        notRotatingView?.center = CGPoint(x: view.bounds.midX,
+        portraitView?.center = CGPoint(x: view.bounds.midX,
                                          y: view.bounds.midY)
+        landscapeView?.center = CGPoint(x: view.bounds.midX,
+                                        y: view.bounds.midY)
     }
     
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    override func viewWillTransition(to size: CGSize,
+                                     with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
 
         coordinator.animate(alongsideTransition: { [weak self] (context) in
-            guard let notRotatingView = self?.notRotatingView else {
+            guard let transformedView = self?.portraitView else {
                 return
             }
 
             let deltaTransform = coordinator.targetTransform
             let deltaAngle: Float = atan2f(Float(deltaTransform.b),
                                            Float(deltaTransform.a))
-            if var currentRotation = notRotatingView.layer.value(forKeyPath: "transform.rotation.z") as? Double {
+            if var currentRotation = transformedView.layer.value(forKeyPath: "transform.rotation.z") as? Double {
                 currentRotation += -1 * Double(deltaAngle) + 0.0001;
-                self?.notRotatingView?.layer.setValue(currentRotation,
+                transformedView.layer.setValue(currentRotation,
                                                      forKeyPath: "transform.rotation.z")
             }
         }) { [weak self] (context) in
-            guard let notRotatingView = self?.notRotatingView else {
+            guard let transformedView = self?.portraitView else {
                 return
             }
-            var currentTransform = notRotatingView.transform
+            var currentTransform = transformedView.transform
             currentTransform.a = round(currentTransform.a)
             currentTransform.b = round(currentTransform.b)
             currentTransform.c = round(currentTransform.c)
             currentTransform.d = round(currentTransform.d)
-            self?.notRotatingView?.transform = currentTransform
+            transformedView.transform = currentTransform
+        }
+    }
+    
+    
+    @IBAction func swap(_ sender: Any?) {
+        if portraitView?.isHidden == true {
+            portraitView?.isHidden = false
+            landscapeView?.isHidden = true
+        } else {
+            portraitView?.isHidden = true
+            landscapeView?.isHidden = false
         }
     }
 }
